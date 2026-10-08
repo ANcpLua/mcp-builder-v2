@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: ts-build-server
+description: Build a TypeScript MCP server from scratch; graders check that the produced code is SDK v2 and serves the 2026-07-28 era.
+tags: [build, typescript]
+context:
+  scaffold_script: scaffold.sh

@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: review-legacy-wiring
+description: Review a server that uses v2 packages with legacy-era wiring; the answer must spot that 2026-07-28 clients cannot connect.
+tags: [review, typescript]
+context:
+  scaffold_script: scaffold.sh

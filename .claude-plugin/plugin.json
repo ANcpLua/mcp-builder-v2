@@ -1,0 +1,21 @@
+{
+  "name": "mcp-builder-v2",
+  "displayName": "MCP Builder v2",
+  "version": "0.1.2",
+  "description": "Build, migrate and check MCP servers on SDK v2 and spec 2026-07-28 (TypeScript and Python). Ships runnable templates, a v1-drift checker, and a black-box verifier that proves a server answers both 2026-07-28 and 2025-era clients.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "sdk-v2",
+    "migration",
+    "verification"
+  ],
+  "homepage": "https://github.com/ANcpLua/mcp-builder-v2",
+  "repository": "https://github.com/ANcpLua/mcp-builder-v2"
+}

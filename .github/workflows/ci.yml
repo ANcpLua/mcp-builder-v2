@@ -1,0 +1,56 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * 1' # weekly: catches SDK and tool releases (no model usage)
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: skills/mcp-builder-v2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Drift rules prove themselves
+        run: node scripts/check_v2.mjs --self-test
+      - name: Templates agree with pins.json
+        run: node scripts/check_pins.mjs
+      - name: Templates are drift-free
+        run: node scripts/check_v2.mjs templates
+
+      - name: TypeScript template (both eras)
+        working-directory: skills/mcp-builder-v2/templates/typescript
+        run: npm install && npm run typecheck && npm test
+      - name: TypeScript template answers both eras over stdio
+        run: node scripts/verify_server.mjs --cwd templates/typescript -- npx tsx src/stdio.ts
+
+      - name: Python template (both eras)
+        working-directory: skills/mcp-builder-v2/templates/python
+        run: python -m venv .venv && .venv/bin/pip install -e ".[dev]" && .venv/bin/pytest -q
+      - name: Python template answers both eras over HTTP
+        run: node scripts/verify_server.mjs --url http://127.0.0.1:8000/mcp --cwd templates/python --start -- .venv/bin/python -m catalog_mcp http
+
+      - name: Evaluation harness (offline, fake Claude)
+        working-directory: skills/mcp-builder-v2/scripts
+        run: python -m pip install -r requirements.txt pytest && python -m pytest -q test_evaluation.py
+
+      - name: Registry news (advisory)
+        run: node scripts/check_pins.mjs --online || true
+
+      - name: Weekly-check script (unit tests)
+        working-directory: .
+        run: node --test ci/weekly.test.mjs
+
+# Model evals run in evals.yml (needs the ANTHROPIC_API_KEY repository secret), or as a scheduled task on a Claude
+# plan (ci/SCHEDULED_TASK.md).

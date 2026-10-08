@@ -1,0 +1,14 @@
+{
+    "$comment": "Which official conformance scenarios say something about an ordinary server, and which of their checks need the SDK 'everything server' test fixtures (tools like test_missing_capability). Fixture checks are reported as 'not applicable', never as failures. Data only; verify_server.mjs reads it.",
+    "scenarios": ["server-stateless", "tools-list"],
+    "localhost_only_scenarios": ["dns-rebinding-protection"],
+    "fixture_checks": [
+        "sep-2575-server-rejects-undeclared-capability",
+        "sep-2575-missing-capability-http-400",
+        "sep-2575-http-server-no-independent-requests-on-stream",
+        "sep-2575-server-no-log-without-loglevel"
+    ],
+    "opt_in_scenarios": {
+        "caching": "only when the server implements tools, prompts and resources (the scenario calls all five cacheable methods)"
+    }
+}

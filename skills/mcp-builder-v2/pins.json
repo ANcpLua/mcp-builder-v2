@@ -1,0 +1,51 @@
+{
+    "$comment": "Single source of truth for every version, date and tool pin this skill uses. scripts/check_pins.mjs verifies templates match this file (offline) and compares it to the registries (--online).",
+    "verified_on": "2026-10-07",
+    "spec": {
+        "current": "2026-07-28",
+        "legacy_handshake": "2025-11-25",
+        "next_release": "2027-03-30 (proposed in SEP-3398, not adopted)"
+    },
+    "typescript": {
+        "node": ">=20",
+        "dependencies": {
+            "@modelcontextprotocol/server": "^2.3.1",
+            "@modelcontextprotocol/node": "^2.1.1",
+            "@modelcontextprotocol/express": "^2.0.2",
+            "express": "^5.2.1",
+            "zod": "^4.6.5"
+        },
+        "devDependencies": {
+            "@modelcontextprotocol/client": "^2.3.1",
+            "@types/express": "^5.0.6",
+            "@types/node": "^22.19.0",
+            "tsx": "^4.23.15",
+            "typescript": "^7.0.2"
+        },
+        "zod_minimum": "4.2.0",
+        "codemod": "@modelcontextprotocol/codemod@latest"
+    },
+    "python": {
+        "python": ">=3.10",
+        "requirement": "mcp[cli]>=2.3,<3",
+        "major": 2
+    },
+    "tools": {
+        "inspector": "@modelcontextprotocol/inspector@2.9.0",
+        "inspector_node": ">=22.19.0",
+        "conformance": "@modelcontextprotocol/conformance@0.2.0-alpha.12"
+    },
+    "eval": {
+        "anthropic": "anthropic>=1.12,<2",
+        "mcp": "mcp>=2.3,<3",
+        "default_model": "claude-sonnet-5-5"
+    },
+    "sunsets": {
+        "ts_sdk_v1_support_until_at_least": "2027-01-27",
+        "python_sdk_v1": "critical and security fixes on the newest 1.x only; no end date stated",
+        "sep_2577_sampling_roots_logging_removable_from": "first spec revision released on or after 2027-07-28",
+        "dynamic_client_registration_removable_from": "first spec revision released on or after 2027-07-28",
+        "http_sse_transport": "deprecated; removable three months after SEP-2596 is Final",
+        "server_legacy_package": "removed in TS SDK v3"
+    }
+}

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "catalog-mcp"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = ["mcp[cli]>=2.3,<3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "anyio>=4.9"]
+
+[tool.setuptools]
+packages = ["catalog_mcp"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+# Deprecated MCP surfaces (ctx.info/log, sampling, roots) fail the build instead of warning.
+filterwarnings = ["error"]

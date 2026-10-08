@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: py-build-server
+description: Build a Python MCP server from scratch; graders check that the produced code targets mcp 2.x (MCPServer) and not FastMCP or HTTP+SSE.
+tags: [build, python]
+context:
+  scaffold_script: scaffold.sh

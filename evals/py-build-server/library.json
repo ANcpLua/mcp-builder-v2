@@ -1,0 +1,580 @@
+{
+ "authors": [
+  {
+   "id": "a01",
+   "name": "Ursula Vance",
+   "born": 1931
+  },
+  {
+   "id": "a02",
+   "name": "Tomas Herrera",
+   "born": 1962
+  },
+  {
+   "id": "a03",
+   "name": "Mei Lin Okafor",
+   "born": 1978
+  },
+  {
+   "id": "a04",
+   "name": "Pieter de Wit",
+   "born": 1950
+  },
+  {
+   "id": "a05",
+   "name": "Amara Nwosu",
+   "born": 1985
+  },
+  {
+   "id": "a06",
+   "name": "Johan Berg",
+   "born": 1940
+  }
+ ],
+ "books": [
+  {
+   "id": "b001",
+   "title": "Silent Archive of Salt",
+   "author_id": "a06",
+   "year": 1967,
+   "genre": "history",
+   "pages": 157
+  },
+  {
+   "id": "b002",
+   "title": "Northern Harbor Protocol",
+   "author_id": "a05",
+   "year": 1974,
+   "genre": "science",
+   "pages": 194
+  },
+  {
+   "id": "b003",
+   "title": "The River Season",
+   "author_id": "a04",
+   "year": 1981,
+   "genre": "mystery",
+   "pages": 231
+  },
+  {
+   "id": "b004",
+   "title": "Last River Chronicle",
+   "author_id": "a03",
+   "year": 1988,
+   "genre": "poetry",
+   "pages": 268
+  },
+  {
+   "id": "b005",
+   "title": "Silent Engine Theory",
+   "author_id": "a02",
+   "year": 1995,
+   "genre": "fantasy",
+   "pages": 305
+  },
+  {
+   "id": "b006",
+   "title": "The Engine of Glass",
+   "author_id": "a01",
+   "year": 2002,
+   "genre": "history",
+   "pages": 342
+  },
+  {
+   "id": "b007",
+   "title": "A River of Salt",
+   "author_id": "a06",
+   "year": 2009,
+   "genre": "science",
+   "pages": 379
+  },
+  {
+   "id": "b008",
+   "title": "The Lantern Protocol",
+   "author_id": "a05",
+   "year": 2016,
+   "genre": "mystery",
+   "pages": 416
+  },
+  {
+   "id": "b009",
+   "title": "Northern River Season",
+   "author_id": "a04",
+   "year": 1963,
+   "genre": "poetry",
+   "pages": 453
+  },
+  {
+   "id": "b010",
+   "title": "A River Chronicle",
+   "author_id": "a03",
+   "year": 1970,
+   "genre": "fantasy",
+   "pages": 490
+  },
+  {
+   "id": "b011",
+   "title": "Last Lantern Theory",
+   "author_id": "a02",
+   "year": 1977,
+   "genre": "history",
+   "pages": 527
+  },
+  {
+   "id": "b012",
+   "title": "The Atlas of Glass",
+   "author_id": "a01",
+   "year": 1984,
+   "genre": "science",
+   "pages": 564
+  },
+  {
+   "id": "b013",
+   "title": "Last River of Salt",
+   "author_id": "a06",
+   "year": 1991,
+   "genre": "mystery",
+   "pages": 601
+  },
+  {
+   "id": "b014",
+   "title": "A Harbor Protocol",
+   "author_id": "a05",
+   "year": 1998,
+   "genre": "poetry",
+   "pages": 638
+  },
+  {
+   "id": "b015",
+   "title": "Hidden Engine Season",
+   "author_id": "a04",
+   "year": 2005,
+   "genre": "fantasy",
+   "pages": 675
+  },
+  {
+   "id": "b016",
+   "title": "The Engine Chronicle",
+   "author_id": "a03",
+   "year": 2012,
+   "genre": "history",
+   "pages": 712
+  },
+  {
+   "id": "b017",
+   "title": "Last Lantern Theory",
+   "author_id": "a02",
+   "year": 2019,
+   "genre": "science",
+   "pages": 149
+  },
+  {
+   "id": "b018",
+   "title": "The Archive of Glass",
+   "author_id": "a01",
+   "year": 1966,
+   "genre": "mystery",
+   "pages": 186
+  },
+  {
+   "id": "b019",
+   "title": "The Engine of Salt",
+   "author_id": "a06",
+   "year": 1973,
+   "genre": "poetry",
+   "pages": 223
+  },
+  {
+   "id": "b020",
+   "title": "A Garden Protocol",
+   "author_id": "a05",
+   "year": 1980,
+   "genre": "fantasy",
+   "pages": 260
+  },
+  {
+   "id": "b021",
+   "title": "Northern Archive Season",
+   "author_id": "a04",
+   "year": 1987,
+   "genre": "history",
+   "pages": 297
+  },
+  {
+   "id": "b022",
+   "title": "Last River Chronicle",
+   "author_id": "a03",
+   "year": 1994,
+   "genre": "science",
+   "pages": 334
+  },
+  {
+   "id": "b023",
+   "title": "Last Garden Theory",
+   "author_id": "a02",
+   "year": 2001,
+   "genre": "mystery",
+   "pages": 371
+  },
+  {
+   "id": "b024",
+   "title": "Last Atlas of Glass",
+   "author_id": "a01",
+   "year": 2008,
+   "genre": "poetry",
+   "pages": 408
+  },
+  {
+   "id": "b025",
+   "title": "Hidden Archive of Salt",
+   "author_id": "a06",
+   "year": 2015,
+   "genre": "fantasy",
+   "pages": 445
+  },
+  {
+   "id": "b026",
+   "title": "The Engine Protocol",
+   "author_id": "a05",
+   "year": 1962,
+   "genre": "history",
+   "pages": 482
+  },
+  {
+   "id": "b027",
+   "title": "Last Harbor Season",
+   "author_id": "a04",
+   "year": 1969,
+   "genre": "science",
+   "pages": 519
+  },
+  {
+   "id": "b028",
+   "title": "A Garden Chronicle",
+   "author_id": "a03",
+   "year": 1976,
+   "genre": "mystery",
+   "pages": 556
+  },
+  {
+   "id": "b029",
+   "title": "The Engine Theory",
+   "author_id": "a02",
+   "year": 1983,
+   "genre": "poetry",
+   "pages": 593
+  },
+  {
+   "id": "b030",
+   "title": "Hidden River of Glass",
+   "author_id": "a01",
+   "year": 1990,
+   "genre": "fantasy",
+   "pages": 630
+  }
+ ],
+ "members": [
+  {
+   "id": "m01",
+   "name": "Rosa Klein"
+  },
+  {
+   "id": "m02",
+   "name": "Ivo Petrov"
+  },
+  {
+   "id": "m03",
+   "name": "Sana Malik"
+  },
+  {
+   "id": "m04",
+   "name": "Leon Fischer"
+  },
+  {
+   "id": "m05",
+   "name": "Nora Haddad"
+  }
+ ],
+ "loans": [
+  {
+   "id": "l001",
+   "book_id": "b008",
+   "member_id": "m02",
+   "borrowed": "2025-02-04",
+   "returned": "2025-02-28"
+  },
+  {
+   "id": "l002",
+   "book_id": "b015",
+   "member_id": "m03",
+   "borrowed": "2025-03-07",
+   "returned": "2025-03-28"
+  },
+  {
+   "id": "l003",
+   "book_id": "b022",
+   "member_id": "m04",
+   "borrowed": "2025-04-10",
+   "returned": "2025-04-28"
+  },
+  {
+   "id": "l004",
+   "book_id": "b029",
+   "member_id": "m05",
+   "borrowed": "2025-05-13",
+   "returned": null
+  },
+  {
+   "id": "l005",
+   "book_id": "b006",
+   "member_id": "m01",
+   "borrowed": "2025-06-16",
+   "returned": "2025-06-28"
+  },
+  {
+   "id": "l006",
+   "book_id": "b013",
+   "member_id": "m02",
+   "borrowed": "2025-07-19",
+   "returned": "2025-07-28"
+  },
+  {
+   "id": "l007",
+   "book_id": "b020",
+   "member_id": "m03",
+   "borrowed": "2025-08-22",
+   "returned": "2025-08-28"
+  },
+  {
+   "id": "l008",
+   "book_id": "b027",
+   "member_id": "m04",
+   "borrowed": "2025-09-25",
+   "returned": null
+  },
+  {
+   "id": "l009",
+   "book_id": "b004",
+   "member_id": "m05",
+   "borrowed": "2025-10-01",
+   "returned": "2025-10-28"
+  },
+  {
+   "id": "l010",
+   "book_id": "b011",
+   "member_id": "m01",
+   "borrowed": "2025-11-04",
+   "returned": "2025-11-28"
+  },
+  {
+   "id": "l011",
+   "book_id": "b018",
+   "member_id": "m02",
+   "borrowed": "2025-12-07",
+   "returned": "2025-12-28"
+  },
+  {
+   "id": "l012",
+   "book_id": "b025",
+   "member_id": "m03",
+   "borrowed": "2025-01-10",
+   "returned": null
+  },
+  {
+   "id": "l013",
+   "book_id": "b002",
+   "member_id": "m04",
+   "borrowed": "2025-02-13",
+   "returned": "2025-02-28"
+  },
+  {
+   "id": "l014",
+   "book_id": "b009",
+   "member_id": "m05",
+   "borrowed": "2025-03-16",
+   "returned": "2025-03-28"
+  },
+  {
+   "id": "l015",
+   "book_id": "b016",
+   "member_id": "m01",
+   "borrowed": "2025-04-19",
+   "returned": "2025-04-28"
+  },
+  {
+   "id": "l016",
+   "book_id": "b023",
+   "member_id": "m02",
+   "borrowed": "2025-05-22",
+   "returned": null
+  },
+  {
+   "id": "l017",
+   "book_id": "b030",
+   "member_id": "m03",
+   "borrowed": "2025-06-25",
+   "returned": "2025-06-28"
+  },
+  {
+   "id": "l018",
+   "book_id": "b007",
+   "member_id": "m04",
+   "borrowed": "2025-07-01",
+   "returned": "2025-07-28"
+  },
+  {
+   "id": "l019",
+   "book_id": "b014",
+   "member_id": "m05",
+   "borrowed": "2025-08-04",
+   "returned": "2025-08-28"
+  },
+  {
+   "id": "l020",
+   "book_id": "b021",
+   "member_id": "m01",
+   "borrowed": "2025-09-07",
+   "returned": null
+  },
+  {
+   "id": "l021",
+   "book_id": "b028",
+   "member_id": "m02",
+   "borrowed": "2025-10-10",
+   "returned": "2025-10-28"
+  },
+  {
+   "id": "l022",
+   "book_id": "b005",
+   "member_id": "m03",
+   "borrowed": "2025-11-13",
+   "returned": "2025-11-28"
+  },
+  {
+   "id": "l023",
+   "book_id": "b012",
+   "member_id": "m04",
+   "borrowed": "2025-12-16",
+   "returned": "2025-12-28"
+  },
+  {
+   "id": "l024",
+   "book_id": "b019",
+   "member_id": "m05",
+   "borrowed": "2025-01-19",
+   "returned": null
+  },
+  {
+   "id": "l025",
+   "book_id": "b026",
+   "member_id": "m01",
+   "borrowed": "2025-02-22",
+   "returned": "2025-02-28"
+  },
+  {
+   "id": "l026",
+   "book_id": "b003",
+   "member_id": "m02",
+   "borrowed": "2025-03-25",
+   "returned": "2025-03-28"
+  },
+  {
+   "id": "l027",
+   "book_id": "b010",
+   "member_id": "m03",
+   "borrowed": "2025-04-01",
+   "returned": "2025-04-28"
+  },
+  {
+   "id": "l028",
+   "book_id": "b017",
+   "member_id": "m04",
+   "borrowed": "2025-05-04",
+   "returned": null
+  },
+  {
+   "id": "l029",
+   "book_id": "b024",
+   "member_id": "m05",
+   "borrowed": "2025-06-07",
+   "returned": "2025-06-28"
+  },
+  {
+   "id": "l030",
+   "book_id": "b001",
+   "member_id": "m01",
+   "borrowed": "2025-07-10",
+   "returned": "2025-07-28"
+  },
+  {
+   "id": "l031",
+   "book_id": "b008",
+   "member_id": "m02",
+   "borrowed": "2025-08-13",
+   "returned": "2025-08-28"
+  },
+  {
+   "id": "l032",
+   "book_id": "b015",
+   "member_id": "m03",
+   "borrowed": "2025-09-16",
+   "returned": null
+  },
+  {
+   "id": "l033",
+   "book_id": "b022",
+   "member_id": "m04",
+   "borrowed": "2025-10-19",
+   "returned": "2025-10-28"
+  },
+  {
+   "id": "l034",
+   "book_id": "b029",
+   "member_id": "m05",
+   "borrowed": "2025-11-22",
+   "returned": "2025-11-28"
+  },
+  {
+   "id": "l035",
+   "book_id": "b006",
+   "member_id": "m01",
+   "borrowed": "2025-12-25",
+   "returned": "2025-12-28"
+  },
+  {
+   "id": "l036",
+   "book_id": "b013",
+   "member_id": "m02",
+   "borrowed": "2025-01-01",
+   "returned": null
+  },
+  {
+   "id": "l037",
+   "book_id": "b020",
+   "member_id": "m03",
+   "borrowed": "2025-02-04",
+   "returned": "2025-02-28"
+  },
+  {
+   "id": "l038",
+   "book_id": "b027",
+   "member_id": "m04",
+   "borrowed": "2025-03-07",
+   "returned": "2025-03-28"
+  },
+  {
+   "id": "l039",
+   "book_id": "b004",
+   "member_id": "m05",
+   "borrowed": "2025-04-10",
+   "returned": "2025-04-28"
+  },
+  {
+   "id": "l040",
+   "book_id": "b011",
+   "member_id": "m01",
+   "borrowed": "2025-05-13",
+   "returned": null
+  }
+ ]
+}

@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: ts-migrate-v1
+description: Upgrade a v1 TypeScript MCP server; graders check that the result serves 2026-07-28, not only the v1-to-v2 package rename.
+tags: [migrate, typescript]
+context:
+  scaffold_script: scaffold.sh

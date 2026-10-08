@@ -1,0 +1,12 @@
+<!-- Format example, answerable against the template catalog server. Real evaluations follow reference/evaluation.md:
+     10 read-only, multi-hop questions over your server's real data, each with one stable, string-comparable answer. -->
+<evaluation>
+   <qa_pair>
+      <question>Among the catalog products whose name contains "mug", what is the id of the most expensive one?</question>
+      <answer>p-003</answer>
+   </qa_pair>
+   <qa_pair>
+      <question>What is the combined price, in cents, of every product in the catalog whose name contains "mug"?</question>
+      <answer>6000</answer>
+   </qa_pair>
+</evaluation>

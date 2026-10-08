@@ -1,0 +1,511 @@
+{
+  "$comment": "Data only. Each rule is one v1 fingerprint: a pattern v1-trained recall tends to write. 'silent' = it compiles/imports under v2 and fails only at runtime or only for modern-era clients. Code rules apply only to files that import the MCP SDK (see 'markers'), unless a rule sets anyFile. Every rule carries a 'bad' and 'good' example; `node check_v2.mjs --self-test` proves each pattern matches its bad and misses its good. Precision is checked against real v2 code too (reference/maintenance.md). Add a rule = add an object here; no code change.",
+  "languages": {
+    "ts": [
+      ".ts",
+      ".tsx",
+      ".mts",
+      ".cts",
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".cjs"
+    ],
+    "py": [
+      ".py"
+    ]
+  },
+  "rules": [
+    {
+      "id": "TS-SDK-V1-PACKAGE",
+      "lang": "ts",
+      "severity": "error",
+      "silent": false,
+      "pattern": "['\"]@modelcontextprotocol/sdk(/[^'\"]*)?['\"]",
+      "says": "imports the v1 single package @modelcontextprotocol/sdk",
+      "fix": "import from '@modelcontextprotocol/server' (servers) or '@modelcontextprotocol/client' (clients)",
+      "bad": "import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';",
+      "good": "import { McpServer } from '@modelcontextprotocol/server';"
+    },
+    {
+      "id": "TS-DEEP-IMPORT",
+      "lang": "ts",
+      "severity": "error",
+      "silent": false,
+      "pattern": "['\"]@modelcontextprotocol/(server|client|node|express|hono|fastify)/[^'\"]*\\.js['\"]",
+      "says": "deep file import path; v2 packages expose only their exports map",
+      "fix": "import from the package root, or the '/stdio' subpath for stdio",
+      "bad": "import { StreamableHTTPServerTransport } from '@modelcontextprotocol/server/streamableHttp.js';",
+      "good": "import { serveStdio } from '@modelcontextprotocol/server/stdio';"
+    },
+    {
+      "id": "TS-STDIO-CONNECT",
+      "lang": "ts",
+      "severity": "error",
+      "silent": true,
+      "pattern": "\\bnew\\s+StdioServerTransport\\s*\\(",
+      "says": "server.connect(new StdioServerTransport()) compiles under v2 but serves only legacy-era (2025) clients; modern clients fail to negotiate",
+      "fix": "serveStdio(() => createServer(deps)) from '@modelcontextprotocol/server/stdio'",
+      "bad": "await server.connect(new StdioServerTransport());",
+      "good": "const handle = serveStdio(() => createServer({ api }));"
+    },
+    {
+      "id": "TS-HTTP-TRANSPORT",
+      "lang": "ts",
+      "severity": "error",
+      "silent": true,
+      "pattern": "\\b(Node|WebStandard)?StreamableHTTPServerTransport\\b",
+      "says": "a hand-wired Streamable HTTP transport serves only legacy-era clients and drags in sessions",
+      "fix": "const handler = createMcpHandler(() => createServer(deps)); mount with toNodeHandler(handler) or export default handler",
+      "bad": "const transport = new NodeStreamableHTTPServerTransport({ sessionIdGenerator: undefined });",
+      "good": "const handler = createMcpHandler(() => createServer({ api }));"
+    },
+    {
+      "id": "TS-SESSIONS",
+      "lang": "ts",
+      "severity": "error",
+      "silent": true,
+      "pattern": "sessionIdGenerator|onsessioninitialized|\\b(ctx|extra)\\.sessionId\\b|\\[\\s*['\"][Mm]cp-[Ss]ession-[Ii]d['\"]\\s*\\]|\\.get\\(\\s*['\"][Mm]cp-[Ss]ession-[Ii]d['\"]",
+      "says": "session state; spec 2026-07-28 removed sessions, so this state is invisible to modern clients",
+      "fix": "keep state in explicit handles returned by a tool and passed back as arguments, or in signed requestState for multi-round calls",
+      "bad": "const id = req.headers['mcp-session-id'];",
+      "good": "exposedHeaders: ['Mcp-Session-Id', 'WWW-Authenticate', 'Mcp-Protocol-Version'],"
+    },
+    {
+      "id": "TS-VARIADIC-REGISTER",
+      "lang": "ts",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\.(tool|prompt|resource)\\s*\\(\\s*['\"`]",
+      "says": "variadic .tool()/.prompt()/.resource() were removed",
+      "fix": "server.registerTool(name, { description, inputSchema: z.object({...}) }, handler) — same for registerPrompt / registerResource",
+      "bad": "server.tool('greet', 'Greet a user', { name: z.string() }, async ({ name }) => ({ content: [] }));",
+      "good": "server.registerTool('greet', { description: 'Greet a user', inputSchema: z.object({ name: z.string() }) }, handler);"
+    },
+    {
+      "id": "TS-RAW-SHAPE",
+      "lang": "ts",
+      "severity": "error",
+      "silent": true,
+      "pattern": "\\b(inputSchema|outputSchema|argsSchema)\\s*:\\s*\\{\\s*['\"]?[\\w$]+['\"]?\\s*:\\s*z\\s*\\.",
+      "says": "raw Zod shape; accepted only by a deprecated overload that wraps it with the SDK's bundled Zod",
+      "fix": "inputSchema: z.object({ ... }) with `import * as z from 'zod/v4'`",
+      "bad": "inputSchema: { city: z.string() },",
+      "good": "inputSchema: { type: 'object', properties: { city: { type: 'string' } } },"
+    },
+    {
+      "id": "TS-ZOD-ROOT",
+      "lang": "ts",
+      "severity": "error",
+      "silent": true,
+      "pattern": "from\\s+['\"]zod['\"]",
+      "says": "root 'zod' import while the project's manifest allows Zod < 4.2 (or declares no zod); v2 needs Zod >= 4.2 and fails at the first tools/list otherwise",
+      "fix": "import * as z from 'zod/v4' and depend on zod ^4.2",
+      "bad": "import { z } from 'zod';",
+      "good": "import * as z from 'zod/v4';",
+      "when": "zod-below-4.2-or-unknown"
+    },
+    {
+      "id": "TS-EXTRA-PARAM",
+      "lang": "ts",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\bextra\\s*\\.\\s*(signal|requestId|sendRequest|sendNotification|authInfo|requestInfo|_meta|closeSSEStream)\\b",
+      "says": "v1 handler 'extra' object; v2 passes a structured ctx",
+      "fix": "ctx.mcpReq.signal / ctx.mcpReq.id / ctx.mcpReq._meta / ctx.http?.authInfo / ctx.http?.req",
+      "bad": "async ({ city }, extra) => { extra.signal.throwIfAborted(); }",
+      "good": "async ({ city }, ctx) => { ctx.mcpReq.signal.throwIfAborted(); }"
+    },
+    {
+      "id": "TS-PUSH-REQUEST",
+      "lang": "ts",
+      "severity": "error",
+      "silent": true,
+      "pattern": "(?<!inputRequired)\\.(elicitInput|requestSampling|createMessage)\\s*\\(",
+      "says": "server-to-client push request; throws on 2026-07-28 requests (MRTR replaces it)",
+      "fix": "return inputRequired({ inputRequests: { key: inputRequired.elicit({...}) } }) and read answers with acceptedContent()",
+      "bad": "const answer = await ctx.mcpReq.elicitInput({ message: 'Confirm?', requestedSchema });",
+      "good": "return inputRequired({ inputRequests: { ideas: inputRequired.createMessage(samplingRequest) } });"
+    },
+    {
+      "id": "TS-PROTOCOL-LOG",
+      "lang": "ts",
+      "severity": "warn",
+      "silent": true,
+      "pattern": "\\.sendLoggingMessage\\s*\\(|\\bctx\\.mcpReq\\.log\\s*\\(",
+      "says": "protocol logging is deprecated (SEP-2577); modern requests only receive it when they carry a logLevel",
+      "fix": "log to stderr (console.error) or OpenTelemetry; keep ctx.mcpReq.log only if clients rely on it",
+      "bad": "await ctx.mcpReq.log('info', { tool }, 'acme');",
+      "good": "console.error('acme: tool called', tool);"
+    },
+    {
+      "id": "TS-URL-ELICIT-ERROR",
+      "lang": "ts",
+      "severity": "error",
+      "silent": true,
+      "pattern": "\\bUrlElicitationRequiredError\\b",
+      "says": "-32042 must not be emitted on 2026-07-28",
+      "fix": "return inputRequired({ inputRequests: { login: inputRequired.elicitUrl({...}) } })",
+      "bad": "throw new UrlElicitationRequiredError([{ mode: 'url', url, message }]);",
+      "good": "return inputRequired({ inputRequests: { login: inputRequired.elicitUrl({ message, url }) } });"
+    },
+    {
+      "id": "TS-MCPERROR",
+      "lang": "ts",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\bMcpError\\b|\\bErrorCode\\.",
+      "says": "v1 error class / enum",
+      "fix": "tools: return { content, isError: true }; resources/prompts: throw new ProtocolError(ProtocolErrorCode.InvalidParams, msg) or ResourceNotFoundError",
+      "bad": "throw new McpError(ErrorCode.InvalidParams, 'bad id');",
+      "good": "throw new ProtocolError(ProtocolErrorCode.InvalidParams, 'bad id');"
+    },
+    {
+      "id": "TS-SSE-SERVER",
+      "lang": "ts",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\bSSEServerTransport\\b|@modelcontextprotocol/server-legacy",
+      "says": "HTTP+SSE transport / frozen v1 copy; deprecated, removed in SDK v3",
+      "fix": "createMcpHandler(factory) over Streamable HTTP",
+      "bad": "import { SSEServerTransport } from '@modelcontextprotocol/server-legacy/sse';",
+      "good": "import { createMcpHandler } from '@modelcontextprotocol/server';"
+    },
+    {
+      "id": "TS-SCHEMA-HANDLER",
+      "lang": "ts",
+      "severity": "error",
+      "silent": false,
+      "pattern": "setRequestHandler\\s*\\(\\s*[A-Z]\\w*Schema\\b",
+      "says": "low-level handler keyed by a Zod schema constant",
+      "fix": "use McpServer.registerTool/registerResource/registerPrompt; low-level handlers take method strings ('tools/call')",
+      "bad": "server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools }));",
+      "good": "server.registerTool('search', { description: 'Search', inputSchema: z.object({ q: z.string() }) }, handler);"
+    },
+    {
+      "id": "TS-TASKS",
+      "lang": "ts",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\btaskSupport\\b|\\btaskStore\\b",
+      "says": "2025-11-25 experimental tasks; removed from core in 2026-07-28 (now the io.modelcontextprotocol/tasks extension)",
+      "fix": "drop it; long work returns a handle the model polls with a second tool",
+      "bad": "execution: { taskSupport: 'optional' },",
+      "good": "annotations: { readOnlyHint: true },"
+    },
+    {
+      "id": "TS-STDOUT-LOG",
+      "lang": "ts",
+      "severity": "error",
+      "silent": true,
+      "pattern": "\\bconsole\\.log\\s*\\(",
+      "requiresInFile": "@modelcontextprotocol/server/stdio|\\bserveStdio\\b",
+      "says": "stdout is the JSON-RPC channel on stdio; one console.log corrupts it",
+      "fix": "console.error(...)",
+      "bad": "console.log('server started');",
+      "good": "console.error('server started');",
+      "badFile": "import { serveStdio } from '@modelcontextprotocol/server/stdio';\nconsole.log('server started');",
+      "unlessInFile": "\\bcreateMcpHandler\\b|\\btoNodeHandler\\b"
+    },
+    {
+      "id": "TS-STDOUT-LOG-MIXED",
+      "lang": "ts",
+      "severity": "warn",
+      "silent": true,
+      "pattern": "\\bconsole\\.log\\s*\\(",
+      "requiresInFile": "^(?=[\\s\\S]*(@modelcontextprotocol/server/stdio|\\bserveStdio\\b))(?=[\\s\\S]*\\b(createMcpHandler|toNodeHandler)\\b)",
+      "says": "console.log in a file that serves both stdio and HTTP; harmless in the HTTP branch, corrupts the protocol in the stdio branch",
+      "fix": "console.error(...) — or confirm this line only runs in HTTP mode and add `mcp-v2-allow TS-STDOUT-LOG-MIXED`",
+      "bad": "console.log(`serving ${endpoint}`);",
+      "good": "console.error(`serving ${endpoint}`);",
+      "badFile": "import { serveStdio } from '@modelcontextprotocol/server/stdio';\nimport { createMcpHandler } from '@modelcontextprotocol/server';\nconsole.log(`serving ${endpoint}`);"
+    },
+    {
+      "id": "PY-FASTMCP",
+      "lang": "py",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\bmcp\\.server\\.fastmcp\\b|\\bFastMCP\\b",
+      "says": "FastMCP was renamed; the module is gone in mcp 2.x",
+      "fix": "from mcp.server import MCPServer; from mcp.server.mcpserver import Context",
+      "bad": "from mcp.server.fastmcp import FastMCP, Context",
+      "good": "from mcp.server import MCPServer"
+    },
+    {
+      "id": "PY-SERVER-TRANSPORT-KWARGS",
+      "lang": "py",
+      "severity": "error",
+      "silent": false,
+      "scope": "file",
+      "pattern": "\\bMCPServer\\s*\\([^)]*\\b(host|port|stateless_http|json_response|streamable_http_path|sse_path|message_path|mount_path|event_store|transport_security)\\s*=",
+      "says": "transport settings on the constructor raise TypeError in 2.x",
+      "fix": "mcp.run(transport=\"streamable-http\", host=..., port=..., stateless_http=True) or mcp.streamable_http_app(...)",
+      "bad": "mcp = MCPServer(\"weather\", stateless_http=True, json_response=True)",
+      "good": "mcp = MCPServer(\"weather\", version=\"1.0.0\")"
+    },
+    {
+      "id": "PY-SETTINGS-TRANSPORT",
+      "lang": "py",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\.settings\\.(host|port|stateless_http|json_response|streamable_http_path)\\b",
+      "says": "mcp.settings holds no transport fields in 2.x",
+      "fix": "pass them to mcp.run(transport=\"streamable-http\", ...)",
+      "bad": "mcp.settings.port = 9000",
+      "good": "mcp.run(transport=\"streamable-http\", port=9000, stateless_http=True)"
+    },
+    {
+      "id": "PY-SECOND-POSITIONAL",
+      "lang": "py",
+      "severity": "error",
+      "silent": true,
+      "pattern": "\\bMCPServer\\s*\\(\\s*(['\"][^'\"]*['\"]|\\w+)\\s*,\\s*['\"]",
+      "says": "the second positional argument is now title, not instructions",
+      "fix": "MCPServer(\"name\", instructions=\"...\", version=\"1.0.0\")",
+      "bad": "mcp = MCPServer(\"weather\", \"Answers weather questions\")",
+      "good": "mcp = MCPServer(\"weather\", instructions=\"Answers weather questions\")"
+    },
+    {
+      "id": "PY-CTX-LOG",
+      "lang": "py",
+      "severity": "warn",
+      "silent": true,
+      "pattern": "\\bctx\\.(log|debug|info|warning|error)\\s*\\(",
+      "says": "protocol logging is deprecated (SEP-2577); modern requests only receive it when they carry a logLevel",
+      "fix": "logger = logging.getLogger(__name__); logger.info(...)  (goes to stderr)",
+      "bad": "await ctx.info(f\"fetching {city}\")",
+      "good": "logger.info(\"fetching %s\", city)"
+    },
+    {
+      "id": "PY-PUSH-REQUEST",
+      "lang": "py",
+      "severity": "error",
+      "silent": true,
+      "pattern": "\\bctx\\.(elicit|elicit_url|elicit_form)\\s*\\(|\\.session\\.create_message\\s*\\(",
+      "says": "push-style server-to-client request; raises NoBackChannelError on 2026-07-28",
+      "fix": "a parameter Annotated[Model, Resolve(fn)] where fn returns Elicit(message, Model) (works in both eras)",
+      "bad": "answer = await ctx.elicit(\"Confirm?\", Confirm)",
+      "good": "confirm: Annotated[Confirm, Resolve(ask_confirm)],"
+    },
+    {
+      "id": "PY-MCPERROR",
+      "lang": "py",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\bMcpError\\b",
+      "says": "v1 error class McpError (2.x: MCPError(code, message, data); ErrorData itself still exists)",
+      "fix": "tools: raise ToolError(msg); protocol errors: raise MCPError(code, message) with `from mcp import MCPError`",
+      "bad": "raise McpError(ErrorData(code=INVALID_PARAMS, message=\"bad id\"))",
+      "good": "raise ToolError(\"No product with id 'x'. Use catalog_search_products to find ids.\")"
+    },
+    {
+      "id": "PY-CAMEL-ATTR",
+      "lang": "py",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\.(isError|structuredContent|inputSchema|outputSchema|nextCursor|mimeType|serverInfo|protocolVersion|uriTemplate|listChanged|progressToken)\\b",
+      "says": "camelCase attribute; 2.x types are snake_case (AttributeError at runtime)",
+      "fix": ".is_error / .structured_content / .input_schema / .output_schema / .next_cursor / .mime_type ...",
+      "bad": "if result.isError: return result.structuredContent",
+      "good": "if result.is_error: return result.structured_content"
+    },
+    {
+      "id": "PY-OLD-CONTEXT",
+      "lang": "py",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\.get_context\\s*\\(\\s*\\)|\\bctx\\.fastmcp\\b|\\bctx\\.client_id\\b|Context\\s*\\[\\s*ServerSession",
+      "says": "v1 context access",
+      "fix": "declare a `ctx: Context` (or Context[State]) parameter; ctx.mcp_server; ctx.request_context.lifespan_context",
+      "bad": "ctx = mcp.get_context()",
+      "good": "async def tool(city: str, ctx: Context) -> str:"
+    },
+    {
+      "id": "PY-STREAMABLEHTTP-CLIENT",
+      "lang": "py",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\bstreamablehttp_client\\b|\\bcreate_connected_server_and_client_session\\b",
+      "says": "v1 client helpers (and their 3-tuple)",
+      "fix": "async with Client(\"http://host/mcp\") as client  — or Client(server) in tests",
+      "bad": "async with streamablehttp_client(url) as (read, write, _):",
+      "good": "async with Client(url) as client:"
+    },
+    {
+      "id": "PY-CLIENTSESSION",
+      "lang": "py",
+      "severity": "warn",
+      "silent": false,
+      "pattern": "(?<![\\w.])ClientSession\\s*\\(",
+      "says": "low-level ClientSession + initialize (still supported in 2.x, the v1 shape); Client is the high-level form and negotiates the era",
+      "fix": "async with Client(target, mode=...) as client — target is a URL, StdioServerParameters, or an MCPServer",
+      "bad": "async with ClientSession(read, write) as session:",
+      "good": "async with aiohttp.ClientSession() as http:",
+      "requiresInFile": "from\\s+mcp(\\.[\\w.]+)?\\s+import[^\\n]*\\bClientSession\\b",
+      "badFile": "from mcp import ClientSession\nasync with ClientSession(read, write) as session:"
+    },
+    {
+      "id": "PY-SHARED-MODULES",
+      "lang": "py",
+      "severity": "error",
+      "silent": false,
+      "pattern": "\\bmcp\\.shared\\.(session|progress|version|context)\\b|\\bwebsocket_(client|server)\\b",
+      "says": "module removed in 2.x",
+      "fix": "see reference/drift.md (Python table)",
+      "bad": "from mcp.shared.progress import progress",
+      "good": "await ctx.report_progress(1, total=3)"
+    },
+    {
+      "id": "PY-SSE-TRANSPORT",
+      "lang": "py",
+      "severity": "error",
+      "silent": true,
+      "pattern": "transport\\s*=\\s*['\"]sse['\"]|\\.sse_app\\s*\\(",
+      "says": "HTTP+SSE transport; deprecated and not part of 2026-07-28",
+      "fix": "mcp.run(transport=\"streamable-http\", stateless_http=True) or mcp.streamable_http_app(stateless_http=True)",
+      "bad": "mcp.run(transport=\"sse\")",
+      "good": "mcp.run(transport=\"streamable-http\", stateless_http=True)"
+    },
+    {
+      "id": "PY-STATELESS",
+      "lang": "py",
+      "severity": "warn",
+      "silent": true,
+      "scope": "file",
+      "pattern": "(transport\\s*=\\s*['\"]streamable-http['\"]|\\.streamable_http_app\\s*\\()",
+      "unlessInFile": "stateless_http\\s*=\\s*True",
+      "says": "legacy-era clients get sticky sessions, so the endpoint cannot scale horizontally (modern clients are sessionless regardless)",
+      "fix": "pass stateless_http=True",
+      "bad": "mcp.run(transport=\"streamable-http\", port=8000)",
+      "good": "mcp.run(transport=\"streamable-http\", port=8000, stateless_http=True)"
+    },
+    {
+      "id": "PY-STDOUT-PRINT",
+      "lang": "py",
+      "severity": "error",
+      "silent": true,
+      "pattern": "^\\s*print\\s*\\(",
+      "requiresInFile": "\\.run\\(\\s*\\)|transport\\s*=\\s*[\"']stdio[\"']",
+      "says": "print() in a file that serves stdio; stdout is the JSON-RPC channel there",
+      "fix": "logging.getLogger(__name__).info(...) — logging writes to stderr",
+      "bad": "print(\"server ready\")",
+      "good": "logger.info(\"server ready\")",
+      "badFile": "from mcp.server import MCPServer\nmcp = MCPServer(\"x\")\nprint(\"server ready\")\nmcp.run()",
+      "unlessInFile": "streamable-http|streamable_http_app|sse_app"
+    },
+    {
+      "id": "ANY-LEGACY-ERROR-CODES",
+      "lang": "any",
+      "severity": "error",
+      "silent": true,
+      "pattern": "(?<![\\d])-320(02|42)\\b",
+      "says": "-32002 (resource not found) and -32042 (URL elicitation) are not 2026-07-28 codes",
+      "fix": "resources: ResourceNotFoundError (TS) / MCPError(INVALID_PARAMS, ...) (-32602); URL flows: input_required",
+      "bad": "throw new ProtocolError(-32002, 'not found');",
+      "good": "throw new ResourceNotFoundError(uri.href);"
+    },
+    {
+      "id": "ANY-INCLUDE-CONTEXT",
+      "lang": "any",
+      "severity": "error",
+      "silent": true,
+      "pattern": "(include_context|includeContext)\\s*[=:]\\s*['\"](thisServer|allServers)['\"]",
+      "says": "includeContext values other than 'none' are deprecated",
+      "fix": "omit includeContext; call your LLM provider directly",
+      "bad": "include_context=\"thisServer\"",
+      "good": "include_context=\"none\""
+    }
+  ],
+  "project": [
+    {
+      "id": "TS-NO-MODERN-ENTRY",
+      "severity": "error",
+      "silent": true,
+      "says": "TypeScript server code builds McpServer but nothing serves it through serveStdio or createMcpHandler, so no entry point speaks 2026-07-28",
+      "fix": "local: serveStdio(() => createServer(deps)); remote: createMcpHandler(() => createServer(deps))"
+    },
+    {
+      "id": "TS-TESTS-LEGACY-ONLY",
+      "severity": "warn",
+      "silent": true,
+      "says": "TypeScript tests connect a Client but never pin the modern era; the default Client speaks legacy, so the tests prove only 2025 behaviour",
+      "fix": "new Client(info, { versionNegotiation: { mode: { pin: '2026-07-28' } } }) for the modern run (see templates/typescript/test/server.test.ts)"
+    },
+    {
+      "id": "PY-TESTS-MODERN-ONLY",
+      "severity": "warn",
+      "silent": true,
+      "says": "Python tests use Client but never mode=\"legacy\"; most hosts still connect in the legacy era",
+      "fix": "parametrize Client(server, mode=...) over \"2026-07-28\" and \"legacy\" (see templates/python/tests/test_server.py)"
+    },
+    {
+      "id": "TS-TSCONFIG-NO-NODE-TYPES",
+      "severity": "error",
+      "silent": false,
+      "says": "TypeScript >= 6 includes no @types packages unless tsconfig lists them; this project uses Node APIs but tsconfig has no \"types\", so `tsc` fails (TS2591) unless an imported package pulls Node's types in. A stdio-only server fails; with an HTTP adapter import it is a warning",
+      "fix": "add \"types\": [\"node\"] to compilerOptions (see templates/typescript/tsconfig.json)"
+    },
+    {
+      "id": "PY-RESOLVE-CLOSURE-STRING-ANNOTATIONS",
+      "severity": "error",
+      "silent": true,
+      "says": "A Resolve(...) resolver is defined inside a function in a module with `from __future__ import annotations`; the annotation stays a string the SDK cannot resolve, so MCPServer raises InvalidSignature when the tool is registered",
+      "fix": "remove `from __future__ import annotations` from that module (Python >= 3.10 needs it for nothing here), or define the resolver at module level"
+    },
+    {
+      "id": "TS-REASK-AFTER-DECLINE",
+      "severity": "warn",
+      "silent": true,
+      "says": "The handler re-issues inputRequired whenever acceptedContent(...) is undefined, which is also the case after a decline or cancel: the user is asked again and again until the client gives up (\"still required input after 10 rounds\")",
+      "fix": "ask only while inputResponse(ctx.mcpReq.inputResponses, key).kind === 'missing'; any answer other than an accepted yes returns a normal \"did not\" result (reference/typescript.md, Asking the user mid-call)"
+    }
+  ],
+  "manifests": [
+    {
+      "id": "M-PKG-SDK-V1",
+      "severity": "error",
+      "says": "package.json depends on the v1 package @modelcontextprotocol/sdk",
+      "fix": "depend on @modelcontextprotocol/server (+ /client, /node, /express as used); `npx @modelcontextprotocol/codemod@latest v1-to-v2 .` rewrites it"
+    },
+    {
+      "id": "M-PKG-SERVER-LEGACY",
+      "severity": "error",
+      "says": "package.json depends on @modelcontextprotocol/server-legacy (frozen v1 copy, removed in v3)",
+      "fix": "remove it; serve with createMcpHandler"
+    },
+    {
+      "id": "M-PKG-ZOD",
+      "severity": "error",
+      "says": "zod range allows a version below 4.2; v2 converts schemas through Zod >= 4.2 and fails at the first tools/list otherwise",
+      "fix": "\"zod\": \"^4.2.0\" or newer"
+    },
+    {
+      "id": "M-PY-MCP-RANGE",
+      "severity": "error",
+      "says": "the mcp requirement targets v1 or has a v1-era floor without a <3 ceiling (e.g. mcp>=1.25 resolves to 2.x by accident)",
+      "fix": "\"mcp[cli]>=2.3,<3\""
+    },
+    {
+      "id": "M-PY-HTTPX-SSE",
+      "severity": "warn",
+      "says": "httpx-sse is a v1-era dependency; mcp 2.x uses httpx2",
+      "fix": "remove it unless your own code uses it"
+    },
+    {
+      "id": "M-PY-MCP-UNPINNED",
+      "severity": "warn",
+      "says": "the mcp requirement has no version bounds; it resolves to 2.x today and will jump to 3.x on release",
+      "fix": "\"mcp[cli]>=2.3,<3\" (a uv workspace member pinned by the workspace root can ignore this)"
+    }
+  ],
+  "markers": {
+    "ts": {
+      "pattern": "@modelcontextprotocol/",
+      "example": "import { McpServer } from '@modelcontextprotocol/server';"
+    },
+    "py": {
+      "pattern": "^\\s*(from|import)\\s+mcp\\b",
+      "example": "from mcp.server import MCPServer"
+    }
+  }
+}

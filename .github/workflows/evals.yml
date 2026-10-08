@@ -1,0 +1,50 @@
+name: evals
+
+# Model evals on API credits: ANTHROPIC_API_KEY must be a repository secret (a workspace-scoped key; cap the
+# workspace's spend in the Claude Console). Every call is pinned to one model so a model change is not read as a skill
+# change. Weekly: the with-plugin arm, 1 run per case. First week of each month: both arms, 3 runs per case.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 5 * * 1' # Mondays, 05:23 UTC
+
+concurrency:
+  group: evals
+  cancel-in-progress: false
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Sandbox tools for claude plugin eval
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq bubblewrap socat
+          # Ubuntu 24.04 runners restrict unprivileged user namespaces, which bubblewrap needs.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: Checks and plugin eval (claude-opus-5-5, at most $20 per run)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node ci/weekly.mjs --model claude-opus-5-5 --max-cost-usd 20 --out ci-out
+      - name: Job summary
+        if: always()
+        run: cat ci-out/summary.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: weekly-${{ github.run_id }}
+          path: |
+            ci-out/summary.md
+            ci-out/result.json
+            ci-out/eval.json
+            ci-out/eval-report.html
+            ci-out/logs/
