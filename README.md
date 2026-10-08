@@ -31,7 +31,9 @@ Five cases written by an independent agent that never saw the skill. Claude Haik
 | Review of a server 2026-07-28 clients cannot reach | 15/15 | 6/15 |
 | **Total** | **51/87** | **10/87** |
 
-Every failure with the skill in the second and fourth case came from two template bugs, fixed in 0.1.1 (`CHANGELOG.md`). A re-run of those two cases with 0.1.1 scored 18/18 and 17/18 with the skill, 0/18 and 0/18 without; they now count as development cases. `check_v2`'s rules from before the run flagged all 12 failing replies written without the skill.
+Every failure with the skill in the second and fourth case came from two template bugs, fixed in 0.1.1 (`CHANGELOG.md`). A re-run of those two cases with 0.1.1 scored 18/18 and 17/18 with the skill, 0/18 and 0/18 without; they now count as development cases.
+
+The same five cases on **Claude Opus 5.5** with skill 0.1.2: **72/87 with the skill, 36/87 without.** Without the skill, all three remote servers served only 2025-era clients, all three stdio servers failed to build, and all three confirmation tools never asked a 2026-07-28 client. The skill's lost points came from a test heuristic that read `"purged": false` as a success claim (9) and one reply that printed a file twice (6). `check_v2`'s rules from before the run flagged all 12 failing replies written without the skill.
 
 ## What's inside
 
