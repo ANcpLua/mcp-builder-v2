@@ -66,9 +66,9 @@ Inspector 2.x, with a config file that pins the era:
 ```
 
 ```bash
-npx -y @modelcontextprotocol/inspector@2.9.0 --cli --config mcp.json --server local --method tools/list
-npx -y @modelcontextprotocol/inspector@2.9.0 --cli --config mcp.json --server local --method tools/call --tool-name acme_get_invoice --tool-arg id=inv_1
-npx -y @modelcontextprotocol/inspector@2.9.0 --config mcp.json          # web UI
+npx -y @modelcontextprotocol/inspector@2.10.1 --cli --config mcp.json --server local --method tools/list
+npx -y @modelcontextprotocol/inspector@2.10.1 --cli --config mcp.json --server local --method tools/call --tool-name acme_get_invoice --tool-arg id=inv_1
+npx -y @modelcontextprotocol/inspector@2.10.1 --config mcp.json          # web UI
 ```
 
 A tool returning `isError: true` makes the Inspector CLI print an extra `{"error":{"code":"tool_is_error",…}}` line and exit non-zero. That is the error path working, not a crash.

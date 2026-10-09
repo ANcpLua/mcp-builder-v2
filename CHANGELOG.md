@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 (2026-10-09)
+
+Inspector 2.9.0 → 2.10.1; all maintenance.md gates green against both protocol eras.
+
 ## 0.1.2 (2026-10-08)
 
 Declined confirmations:

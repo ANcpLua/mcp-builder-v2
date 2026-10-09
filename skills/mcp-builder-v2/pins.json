@@ -1,6 +1,6 @@
 {
     "$comment": "Single source of truth for every version, date and tool pin this skill uses. scripts/check_pins.mjs verifies templates match this file (offline) and compares it to the registries (--online).",
-    "verified_on": "2026-10-07",
+    "verified_on": "2026-10-08",
     "spec": {
         "current": "2026-07-28",
         "legacy_handshake": "2025-11-25",
@@ -31,7 +31,7 @@
         "major": 2
     },
     "tools": {
-        "inspector": "@modelcontextprotocol/inspector@2.9.0",
+        "inspector": "@modelcontextprotocol/inspector@2.10.1",
         "inspector_node": ">=22.19.0",
         "conformance": "@modelcontextprotocol/conformance@0.2.0-alpha.12"
     },
