@@ -59,6 +59,19 @@ Requirements:
 - Node ≥ 20. `verify_server` needs ≥ 22.19 for Inspector 2.x.
 - Python ≥ 3.10, for Python servers and the evaluation harness.
 
+## Privacy and network use
+
+The plugin collects no personal data and sends nothing to its maintainer. It has no hooks, MCP servers, analytics or telemetry of its own. Its scripts run on your machine, only when you or Claude invoke them:
+
+- `check_v2` reads your project's files and prints its findings locally. It contacts nothing.
+- `verify_server` starts or connects to the MCP server you point it at. It runs the MCP Inspector and the MCP conformance tool through `npx` at the exact versions in `pins.json`, so npm downloads them from the npm registry.
+- `check_pins --online` asks the npm registry and PyPI for current versions.
+- `evaluation.py` sends its prompts and your server's tool results to the Anthropic API, using your own `ANTHROPIC_API_KEY`.
+- The skill's scaffold step has Claude run `npm install` or `pip install` in your new project, which fetches the template's dependencies from the npm registry or PyPI.
+- `ci/weekly.mjs`, the maintainer's regression check, runs `claude plugin eval` with your own Claude login or API key. It exports run telemetry only when `QYL_OTLP_ENDPOINT` or `OTEL_EXPORTER_OTLP_ENDPOINT` is set, only to that endpoint.
+
+Nothing is stored beyond the output you ask for. Details: [PRIVACY.md](PRIVACY.md).
+
 ## Relationship to Anthropic's MCP skills
 
 `mcp-server-dev` (official marketplace) and `mcp-builder` (anthropics/skills) cover deployment choice, MCPB and MCP Apps, but their code targets SDK v1 and spec 2025-11-25 (verified 2026-10-07). This plugin is a bridge for SDK v2 code and its verification.

@@ -1,6 +1,6 @@
 ---
 name: mcp-builder-v2
-description: MCP server work on SDK v2 and spec 2026-07-28, in TypeScript or Python: building a new server, migrating one off SDK v1 (@modelcontextprotocol/sdk, FastMCP), checking a server for v1 drift, or writing its evaluations. Use instead of mcp-builder.
+description: "MCP server work on SDK v2 and spec 2026-07-28, in TypeScript or Python: building a new server, migrating one off SDK v1 (@modelcontextprotocol/sdk, FastMCP), checking a server for v1 drift, or writing its evaluations. Use instead of mcp-builder."
 license: Complete terms in LICENSE.txt
 ---
 

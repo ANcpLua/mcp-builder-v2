@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.4 (2026-10-09)
+
+For the directory submission. No change to the skill's instructions, templates or scripts.
+
+- `SKILL.md`: the `description` is quoted. Unquoted, its "Python: building" is invalid YAML for strict parsers.
+- README: new "Privacy and network use" section, listing everything the scripts run, fetch and send. `PRIVACY.md` adds
+  storage and retention, the scaffold installs, and the variables that turn on the weekly check's telemetry.
+
 ## 0.1.3 (2026-10-09)
 
 Inspector 2.9.0 → 2.10.1; all maintenance.md gates green against both protocol eras.
