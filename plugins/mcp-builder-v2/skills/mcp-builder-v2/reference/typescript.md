@@ -2,7 +2,7 @@
 
 Every snippet here ran against the versions in `pins.json`. The runnable whole is `templates/typescript/`; start there and change it, rather than writing SDK calls from memory. Sections marked **drift point** are where recall produces v1 code that still compiles; copy those lines exactly.
 
-Live docs, for anything not covered: `https://ts.sdk.modelcontextprotocol.io/v2/llms.txt` (every page also exists as `.md`). A page that imports from `@modelcontextprotocol/sdk` is v1 documentation, so close it and use the v2 site.
+For anything not covered here, use the live v2 docs named in `SKILL.md` ("Something the references do not cover"). A page that imports from `@modelcontextprotocol/sdk` is v1 documentation, so close it and use the v2 site.
 
 ## Project
 

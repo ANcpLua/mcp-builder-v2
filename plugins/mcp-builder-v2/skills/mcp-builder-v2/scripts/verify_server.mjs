@@ -86,8 +86,11 @@ export function report(results) {
 
 // ---------------------------------------------------------------- imperative shell
 
+// The Inspector's secret store stays in memory (no keychain prompt); children inherit this one variable.
+process.env.MCP_INSPECTOR_SECRET_STORE ??= 'memory';
+
 function run(cmd, args, opts = {}) {
-    const r = spawnSync(cmd, args, { encoding: 'utf8', timeout: 180_000, env: { ...process.env, MCP_INSPECTOR_SECRET_STORE: 'memory' }, ...opts });
+    const r = spawnSync(cmd, args, { encoding: 'utf8', timeout: 180_000, ...opts });
     return { code: r.status ?? 1, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
 }
 

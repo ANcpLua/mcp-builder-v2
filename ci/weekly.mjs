@@ -239,7 +239,8 @@ function hex(n) { return randomBytes(n).toString('hex'); }
 // ------------------------------------------------------------------ imperative shell
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SKILL = join(ROOT, 'skills', 'mcp-builder-v2');
+const PLUGIN = join(ROOT, 'plugins', 'mcp-builder-v2');
+const SKILL = join(PLUGIN, 'skills', 'mcp-builder-v2');
 
 function log(msg) { console.log(`[${new Date().toISOString().slice(11, 19)}] ${msg}`); }
 
@@ -334,7 +335,7 @@ async function main(argv) {
         let r = { code: 1, tail: problem ?? '' };
         if (!problem) {
             log(`eval: ${mode.name}, ${opts.model}, ${mode.runs} run(s) per case, cost ceiling $${mode.maxCostUsd}`);
-            r = await runCommand(evalCommand({ root: ROOT, out, model: opts.model, mode }), { timeoutMs: 75 * MINUTE, logFile: join(out, 'logs', 'eval.log') });
+            r = await runCommand(evalCommand({ root: PLUGIN, out, model: opts.model, mode }), { timeoutMs: 75 * MINUTE, logFile: join(out, 'logs', 'eval.log') });
         }
         const parsed = existsSync(jsonFile) ? scoresFromEval(JSON.parse(readFileSync(jsonFile, 'utf8'))) : null;
         const baselineFile = join(ROOT, 'ci', 'baseline', `${opts.model}.json`);
@@ -352,7 +353,7 @@ async function main(argv) {
     }
 
     const v = verdict(results, evalRun);
-    const version = JSON.parse(readFileSync(join(ROOT, '.claude-plugin', 'plugin.json'), 'utf8')).version;
+    const version = JSON.parse(readFileSync(join(PLUGIN, '.claude-plugin', 'plugin.json'), 'utf8')).version;
     const telemetry = await sendTelemetry(otlpPayloads({ service: SERVICE, version, sessionId, model: opts.model, startNs, phases: results, evalRun }));
     const summary = renderSummary({ date: today.toISOString().slice(0, 10), verdict: v, model: opts.model, phases: results, evalRun, telemetry });
     writeFileSync(join(out, 'summary.md'), summary);

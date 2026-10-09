@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.5 (2026-10-09)
+
+Packaging for the Claude plugin directory. No change to the skill's instructions or templates.
+
+- The plugin now lives in `plugins/mcp-builder-v2/`; the repository root keeps the maintainer's CI (`ci/`, `.github/`) and a
+  `marketplace.json`, so installs no longer include them. Install: `/plugin install mcp-builder-v2 --marketplace ANcpLua/mcp-builder-v2`.
+- `plugin.json`: documentation, privacy policy, support and terms links for the directory listing.
+- README: example prompts, the newest results first, tested surfaces, a security contact. New `SECURITY.md`.
+- `verify_server.mjs` sets the one variable the Inspector needs instead of copying the whole environment into each call.
+- `reference/typescript.md` points to the live docs named in `SKILL.md` instead of repeating the URL.
+
 ## 0.1.4 (2026-10-09)
 
 For the directory submission. No change to the skill's instructions, templates or scripts.

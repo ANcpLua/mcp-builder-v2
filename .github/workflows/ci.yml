@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: skills/mcp-builder-v2
+        working-directory: plugins/mcp-builder-v2/skills/mcp-builder-v2
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,19 +30,19 @@ jobs:
         run: node scripts/check_v2.mjs templates
 
       - name: TypeScript template (both eras)
-        working-directory: skills/mcp-builder-v2/templates/typescript
+        working-directory: plugins/mcp-builder-v2/skills/mcp-builder-v2/templates/typescript
         run: npm install && npm run typecheck && npm test
       - name: TypeScript template answers both eras over stdio
         run: node scripts/verify_server.mjs --cwd templates/typescript -- npx tsx src/stdio.ts
 
       - name: Python template (both eras)
-        working-directory: skills/mcp-builder-v2/templates/python
+        working-directory: plugins/mcp-builder-v2/skills/mcp-builder-v2/templates/python
         run: python -m venv .venv && .venv/bin/pip install -e ".[dev]" && .venv/bin/pytest -q
       - name: Python template answers both eras over HTTP
         run: node scripts/verify_server.mjs --url http://127.0.0.1:8000/mcp --cwd templates/python --start -- .venv/bin/python -m catalog_mcp http
 
       - name: Evaluation harness (offline, fake Claude)
-        working-directory: skills/mcp-builder-v2/scripts
+        working-directory: plugins/mcp-builder-v2/skills/mcp-builder-v2/scripts
         run: python -m pip install -r requirements.txt pytest && python -m pytest -q test_evaluation.py
 
       - name: Registry news (advisory)

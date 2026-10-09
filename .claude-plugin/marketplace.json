@@ -1,0 +1,17 @@
+{
+  "name": "ancplua",
+  "owner": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "metadata": {
+    "description": "ANcpLua plugins for Claude: MCP Builder v2, for MCP servers on SDK v2 and spec 2026-07-28."
+  },
+  "plugins": [
+    {
+      "name": "mcp-builder-v2",
+      "source": "./plugins/mcp-builder-v2",
+      "description": "Build, migrate and check MCP servers on SDK v2 and spec 2026-07-28 (TypeScript and Python)."
+    }
+  ]
+}
